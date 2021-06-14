@@ -1,32 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Row, Col, Input, Button } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 import { v4 as uuidv4 } from "uuid";
-const dataTodo = [
-  {
-    id: 1,
-    title: "Eat breacFast",
-  },
 
-  {
-    id: 2,
-    title: "Eat dinner",
-  },
-
-  {
-    id: 3,
-    title: "Eat lunch",
-  },
-];
+const getLocalTIme = () => {
+  let todo = localStorage.getItem("todo");
+  console.log(todo);
+  if (todo) {
+    return JSON.parse(localStorage.getItem("todo"));
+    
+  } else return [];
+  
+};
 
 function TodoApp(props) {
-  const [data, setData] = useState(dataTodo);
+  const [data, setData] = useState(getLocalTIme());
   const [value, setValue] = useState("");
   const [text, setText] = useState("Add");
   const [isUpdate, setisUpdate] = useState(false);
-  const [index, setIndex] = useState(null);
+  const [index, setIndex] = useState();
   const [mess, setMess] = useState("");
+
+   
+  useEffect(() => {
+    localStorage.setItem("todo", JSON.stringify(data));
+  }, [data]);
 
   const handleAddTodo = (todo) => {
     if (isUpdate === false) {
@@ -38,16 +37,15 @@ function TodoApp(props) {
       setData(newData);
       setValue("");
     } else {
-      if (value !== data[index].title) {
-        data[index].title = value;
+      if(data) {
+        if (value !== data[index].title) {
+          data[index].title = value;
+        }
       }
       setText("Add");
-    //   setMess("Update Item successfully");
       setValue("");
       setisUpdate(false);
     }
-
-    
   };
 
   const handleUpdate = (update) => {
@@ -56,7 +54,6 @@ function TodoApp(props) {
     setText("Update");
     setIndex(update.id - 1);
     setisUpdate(true);
-    
   };
 
   const handleDelete = (seleted) => {
@@ -91,7 +88,7 @@ function TodoApp(props) {
           </Button>
         </Col>
         <Col span={24} style={{ marginTop: 20, fontSize: 18 }}>
-         {data.length > 0 ? <div>{data.length} Todos </div> : null} 
+          {data.length > 0 ? <div>{data.length} Todos </div> : null}
         </Col>
         {data.length > 0 ? (
           data.map((item, index) => (
