@@ -1,9 +1,13 @@
 import * as types from "./types";
 
-export const addTodo = (id, title) => ({
+export const getTodo = (val) => ({
+    type: types.GET_TODO,
+    val
+})
+
+export const addTodo = (data) => ({
     type: types.ADD_TODO,
-    id,
-    title
+    data
 });
 
 export const updateTodo = (id, title) => ({

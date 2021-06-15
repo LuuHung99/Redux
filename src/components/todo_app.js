@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from "uuid";
 
 const getLocalTIme = () => {
   let todo = localStorage.getItem("todo");
-  console.log(todo);
   if (todo) {
     return JSON.parse(localStorage.getItem("todo"));
     
@@ -21,8 +20,7 @@ function TodoApp(props) {
   const [isUpdate, setisUpdate] = useState(false);
   const [index, setIndex] = useState();
   const [mess, setMess] = useState("");
-
-   
+  
   useEffect(() => {
     localStorage.setItem("todo", JSON.stringify(data));
   }, [data]);
@@ -30,18 +28,20 @@ function TodoApp(props) {
   const handleAddTodo = (todo) => {
     if (isUpdate === false) {
       const dataNew = {
-        title: todo,
         id: uuidv4(),
+        title: todo,
       };
       const newData = data.concat(dataNew);
       setData(newData);
       setValue("");
     } else {
-      if(data) {
-        if (value !== data[index].title) {
-          data[index].title = value;
-        }
-      }
+        // const dataValue = data;
+
+        console.log("datavalue", data[0].title);
+        // if (value !== dataValue[index].title) {
+        //   // console.log(value);
+        //   dataValue[index].title = value;
+        // }
       setText("Add");
       setValue("");
       setisUpdate(false);
@@ -49,10 +49,9 @@ function TodoApp(props) {
   };
 
   const handleUpdate = (update) => {
-    console.log(update);
+    setIndex(update.id);
     setValue(update.title);
     setText("Update");
-    setIndex(update.id - 1);
     setisUpdate(true);
   };
 
@@ -94,6 +93,7 @@ function TodoApp(props) {
           data.map((item, index) => (
             <Col
               span={24}
+              className="todo"
               style={{
                 height: "auto",
                 padding: "0 500px",

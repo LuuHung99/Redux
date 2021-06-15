@@ -4,7 +4,7 @@ import AppRedux from "./pages/index";
 function App() {
   return (
     
-      <TodoApp />
+      <AppRedux />
    
   );
 }
