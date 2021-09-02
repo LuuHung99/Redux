@@ -7,28 +7,16 @@ const initState = {
 export const todoReducer = (state = initState, action) => {
   switch (action.type) {
     case types.ADD_TODO:
-      const detailId = action.data;
-      if(!state.dataTodo) {
+
         return {
           ...state,
-          dataTodo: [
-            ...state.dataTodo, detailId
-          ],
-          
+          dataTodo: action.data
         };
-      }
-      else {
-        return {
-          ...state,
- 
-        }
-      }
      
     case types.UPDATE_TODO:
       return {
         ...state
       };
-      
     case types.DELETE_TODO:
       const newId = action.id
       //Lay ra item bi xoa

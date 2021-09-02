@@ -2,15 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Row, Col, Input, Button } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
+import Alert from "./Alert";
 
 const getLocalTIme = () => {
   let todo = localStorage.getItem("todo");
   if (todo) {
     return JSON.parse(localStorage.getItem("todo"));
-    
   } else return [];
-  
 };
 
 function TodoApp(props) {
@@ -18,33 +17,51 @@ function TodoApp(props) {
   const [value, setValue] = useState("");
   const [text, setText] = useState("Add");
   const [isUpdate, setisUpdate] = useState(false);
-  const [index, setIndex] = useState();
-  const [mess, setMess] = useState("");
-  
+  const [index, setIndex] = useState(null);
+  const [alert, setAlert] = useState({ show: false, msg: "", type: "" });
+
   useEffect(() => {
     localStorage.setItem("todo", JSON.stringify(data));
   }, [data]);
 
+  const showAlert = (show = false, type = "", msg = "") => {
+    setAlert({ show, type, msg });
+  };
+
   const handleAddTodo = (todo) => {
+    if (value === "") {
+      showAlert(true, "danger", "please enter value");
+    }
+
     if (isUpdate === false) {
       const dataNew = {
-        id: uuidv4(),
+        // id: uuidv4(),
+        id: new Date().getTime().toString(),
         title: todo,
       };
-      const newData = data.concat(dataNew);
+      // const newData = data.concat(dataNew);
+      showAlert(true, "success", "item added to the list");
+      const newData = [...data, dataNew];
       setData(newData);
       setValue("");
-    } else {
-        // const dataValue = data;
-
-        console.log("datavalue", data[0].title);
-        // if (value !== dataValue[index].title) {
-        //   // console.log(value);
-        //   dataValue[index].title = value;
-        // }
+    } else if (value && isUpdate === true) {
+      setData(
+        data.map((item) => {
+          if (item.id === index) {
+            return { ...item, title: value };
+          }
+          return item;
+        })
+      );
+      // console.log("datavalue", data[index].title);
+      // if ( value !== data[index].title) {
+      //   data[index].title = value;
+      // }
       setText("Add");
       setValue("");
       setisUpdate(false);
+      setIndex(null);
+      showAlert(true, "success", "value changed");
     }
   };
 
@@ -56,9 +73,9 @@ function TodoApp(props) {
   };
 
   const handleDelete = (seleted) => {
-    console.log(seleted);
     const deleteItem = data.filter((e) => e.id !== seleted);
     setData(deleteItem);
+    showAlert(true, "danger", "item removed");
     // setMess("Delete Item successfully");
   };
 
@@ -69,11 +86,10 @@ function TodoApp(props) {
           textAlign: "center",
           paddingTop: 100,
           marginBottom: 20,
-          color: "red",
           fontSize: 16,
         }}
       >
-        {mess}
+        {alert.show && <Alert {...alert} removeAlert={showAlert} data={data} />}
       </div>
       <Row style={{ textAlign: "center" }}>
         <Col span={4} style={{ margin: " 0 auto", display: "flex" }}>
